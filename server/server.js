@@ -1,6 +1,7 @@
 import express from 'express';
 import cors from 'cors';
 import path from 'path';
+import fs from 'fs';
 import { fileURLToPath } from 'url';
 import { storage } from './storage.js';
 
@@ -140,7 +141,9 @@ app.post('/api/admin/reset-votes', (req, res) => {
 });
 
 // Serve static frontend build in production
-const clientDistPath = path.resolve(__dirname, '../client/dist');
+const clientDistPath = fs.existsSync(path.resolve(__dirname, '../client/dist'))
+  ? path.resolve(__dirname, '../client/dist')
+  : path.resolve(__dirname, '../dist');
 app.use(express.static(clientDistPath));
 
 app.get('*', (req, res) => {
