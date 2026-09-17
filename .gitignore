@@ -11,7 +11,8 @@ jspm_packages/
 
 # ===== 构建产物 =====
 data/
-# /dist/
+dist/
+/dist/
 build/
 out/
 .output/
