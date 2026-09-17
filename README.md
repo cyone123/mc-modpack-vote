@@ -1,22 +1,22 @@
-# ⛏️ Minecraft 群服周目换整合包投票系统
+# ⛏️ Minecraft 群服周目换整合包投票系统 (Next.js 全栈版)
 
-专为 Minecraft 玩家交流群定制的高颜值、风格化周目换包投票网站。支持投选服主预设的热门整合包，也支持群友自由提交提议；所有投票与提交的数据均在服务端进行原子性持久化存盘（重启服务器不丢数据）。
+专为 Minecraft 玩家交流群定制的高颜值、像素风格化周目换包投票网站。已重构为 **Next.js 15 全栈项目**，前端界面与全套后端 API 一体化整合，完美支持 **Vercel 一键完整托管部署**，也可在本地或云服务器独立运行。
 
 ---
 
 ## ✨ 核心特色
 
 1. **沉浸式 Minecraft 风格 UI**
-   - 黑曜石与深板岩质感底色、红石/钻石/绿宝石色系高光、3D像素质感按钮。
+   - 黑曜石与深板岩质感底色、红石/钻石/绿宝石色系高光、3D像素浮雕按钮。
    - 整合包投票热度实时呈现为 **Minecraft 经典经验条 (XP Bar)** 动态进度。
-   - 支持**经典 MC 音效（可随时一键静音）**：点击木质按钮声、投票升级叮叮声、自荐成功号角声（使用 Web Audio API 原生合成，零外链体积消耗）。
+   - 支持**经典 MC 音效（可随时一键静音）**：木质按钮点击声、经验升级叮叮声、自荐号角声（Web Audio API 原生合成，零外链、零流量消耗）。
 
 2. **丰富的预设整合包矩阵**
    - 涵盖科技自动化（机械动力：星辰大海、星空列车）、全能全家桶（ATM9）、硬核工业修仙（GTNH 格雷科技新地平线）、休闲冒险（宝可梦世代重铸）、RPG地牢刷宝（穹顶之战3）、末日极限求生（寄生虫）以及轻量原版增强生电包等。
    - 卡片直观展示 MC 游戏版本（如 1.20.1 / 1.7.10）、模组加载器（Forge / Fabric / NeoForge）、推荐运行内存（如 6G - 8G）、核心玩法特色及发布页直达链接。
 
 3. **群友自由自荐与提案**
-   - 任何群友均可点击 **“💡 提议我想玩的整合包”** 提交自己的心仪模组包。
+   - 任何群友均可点击 **“提议我想玩的整合包”** 提交自己的心仪模组包。
    - 包含名称、适用版本、加载器、内存要求、标签与推荐理由。
    - 提交成功后立刻加入全服候选池，自动为提案者投出首票并带有专属的 **“群友推荐”** 徽章。
 
@@ -25,8 +25,11 @@
    - 输入正版 Minecraft ID 自动拉取其对应正版皮肤的像素头像；
    - 卡片上可直接查看 “X 位支持者” 展开弹窗，直观看到具体哪些群友投了这票。
 
-5. **服务端持久化存盘与防重复投票**
-   - 数据保存在 `data/votes_db.json` 文件中，服务端采用原子写入保护，进程重启数据不丢。
+5. **全栈架构与持久化存盘机制**
+   - **本地与独立服务器运行**：直接读写 `data/votes_db.json`，原子性写入，进程重启数据不丢。
+   - **Vercel Serverless 运行**：
+     - 开箱即用：自动适配只读环境，在 `/tmp` 中正常处理读写；
+     - 云端持久化：存储层无缝内置适配 [Upstash Redis](https://upstash.com) / Vercel KV。只需在 Vercel 环境变量中添加免费的 `KV_REST_API_URL` 与 `KV_REST_API_TOKEN`（或 `UPSTASH_REDIS_REST_URL` 与 `UPSTASH_REDIS_REST_TOKEN`），即可实现跨实例、永久云端持久化存储！
    - 同一玩家对同一个整合包不可重复刷票，再次点击可自由撤回投票。
 
 6. **服主与管理员控制台**
@@ -37,60 +40,56 @@
 
 ---
 
-## 🚀 启动与使用方式
+## 🚀 运行与部署方式
 
-### 方式一：一键运行生产服务（推荐）
+### 1. Vercel 一键完整托管（推荐）
 
-已经完成前端生产构建，直接运行后端服务即可同时提供 API 和前端页面：
-
-```bash
-# 启动完整全栈服务（默认端口 3001）
-npm start
-```
-
-启动后在浏览器打开：
-```
-http://localhost:3001
-```
-
-### 方式二：开发环境热重载（开发调试时使用）
-
-```bash
-npm run dev
-```
-此命令将同时启动前端 Vite 调试服务（`http://localhost:5173`）与后端 API 服务（`http://localhost:3001`）。
+1. 将当前项目推送至你的 GitHub / GitLab 仓库；
+2. 登录 [Vercel](https://vercel.com)，点击 **“Add New Project”** 并导入该仓库；
+3. **无需任何额外构建配置**，Vercel 会自动识别 Next.js 项目并完成构建与全球边缘部署；
+4. （可选）如果需要在 Vercel 上实现长期跨实例持久化，可以在项目 Settings -> Environment Variables 中添加：
+   - `ADMIN_PASSWORD`: 你的自定义管理员密码（可选，默认 `mcadmin888`）
+   - `KV_REST_API_URL` & `KV_REST_API_TOKEN`: 你的 Upstash Redis 或 Vercel KV 免费凭证（可选）
 
 ---
 
-## 🌐 如何分享给交流群群友访问？
+### 2. 本地开发与测试
 
-1. **局域网联机访问**：
-   如果群友在同一个局域网（或通过虚拟局域网如蒲公英、Zerotier、Radmin LAN）：
-   - 查看你本机的局域网 IP（Windows 命令行运行 `ipconfig`，如 `192.168.1.100`）；
-   - 群友通过浏览器访问 `http://192.168.1.100:3001` 即可。
+```bash
+# 1. 安装依赖
+npm install
 
-2. **公网穿透访问（免公网IP）**：
-   你可以使用群服常用的内网穿透工具将 `3001` 端口映射到公网域名，发到 QQ/微信群中供群友投票：
-   - **SakuraFrp / OpenFrp**：将本地 `3001` 端口映射为一个网页域名；
-   - **Cloudflare Tunnel (cloudflared)**：`cloudflared tunnel --url http://localhost:3001`；
-   - **cpolar / ngrok**：`cpolar http 3001`。
+# 2. 启动 Next.js 本地开发服务
+npm run dev
+```
 
-3. **云服务器部署**：
-   将整个目录上传至云服务器（如腾讯云/阿里云/雨云等）：
-   ```bash
-   npm install
-   npm run build
-   npm start
-   ```
-   放行防火墙 `3001` 端口或通过 Nginx 反向代理。
+在浏览器中打开：
+```
+http://localhost:3000
+```
+
+---
+
+### 3. 本地或云服务器生产运行
+
+```bash
+# 1. 构建生产包
+npm run build
+
+# 2. 启动生产服务（默认端口 3000）
+npm start
+
+# 或指定端口启动，例如 3001 端口：
+npx next start -p 3001
+```
 
 ---
 
 ## ⚙️ 管理员说明
 
-- **默认后台密码**：`mcadmin888`
+- **默认管理密码**：`mcadmin888`
 - **自定义管理密码**：
   在启动前设置环境变量 `ADMIN_PASSWORD`，例如：
-  - Windows PowerShell: `$env:ADMIN_PASSWORD="my_strong_password"; npm start`
-  - Linux/Mac: `ADMIN_PASSWORD=my_strong_password npm start`
-- **数据文件位置**：`data/votes_db.json`，可随时直接备份或迁移。
+  - Windows PowerShell: `$env:ADMIN_PASSWORD="my_strong_password"; npm run dev`
+  - Linux/Mac: `ADMIN_PASSWORD=my_strong_password npm run dev`
+  - Vercel 部署: 直接在 Vercel 仪表盘中的 **Environment Variables** 添加 `ADMIN_PASSWORD` 即可。
