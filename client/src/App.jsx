@@ -6,6 +6,7 @@ import PlayerIdentityModal from './components/PlayerIdentityModal';
 import VotersModal from './components/VotersModal';
 import AdminDrawer from './components/AdminDrawer';
 import { Loader2, AlertCircle, Sparkles, Trophy } from 'lucide-react';
+import { getApiUrl } from './utils/api';
 
 export default function App() {
   const [packs, setPacks] = useState([]);
@@ -38,7 +39,7 @@ export default function App() {
   // Fetch all packs from backend
   const fetchData = useCallback(async () => {
     try {
-      const res = await fetch('/api/packs');
+      const res = await fetch(getApiUrl('/api/packs'));
       if (!res.ok) throw new Error('网络响应异常');
       const data = await res.json();
       if (data.success) {
@@ -79,7 +80,7 @@ export default function App() {
     }
 
     try {
-      const res = await fetch('/api/vote', {
+      const res = await fetch(getApiUrl('/api/vote'), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

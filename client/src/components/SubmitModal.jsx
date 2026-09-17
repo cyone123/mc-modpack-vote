@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { PlusCircle, X, Sparkles, AlertCircle } from 'lucide-react';
 import { soundManager } from '../utils/sound';
+import { getApiUrl } from '../utils/api';
 
 export default function SubmitModal({ isOpen, onClose, playerName, onSubmitSuccess }) {
   const [name, setName] = useState('');
@@ -43,7 +44,7 @@ export default function SubmitModal({ isOpen, onClose, playerName, onSubmitSucce
     soundManager.playClick();
 
     try {
-      const res = await fetch('/api/suggest', {
+      const res = await fetch(getApiUrl('/api/suggest'), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

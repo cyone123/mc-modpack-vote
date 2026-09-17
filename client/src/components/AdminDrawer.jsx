@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Shield, Key, X, Pin, Trash2, RotateCcw, AlertTriangle, CheckCircle2 } from 'lucide-react';
 import { soundManager } from '../utils/sound';
+import { getApiUrl } from '../utils/api';
 
 export default function AdminDrawer({ isOpen, onClose, packs, onDataChange }) {
   const [password, setPassword] = useState('');
@@ -18,7 +19,7 @@ export default function AdminDrawer({ isOpen, onClose, packs, onDataChange }) {
     soundManager.playClick();
 
     try {
-      const res = await fetch('/api/admin/verify', {
+      const res = await fetch(getApiUrl('/api/admin/verify'), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ password })
@@ -39,7 +40,7 @@ export default function AdminDrawer({ isOpen, onClose, packs, onDataChange }) {
   const handleTogglePin = async (packId) => {
     soundManager.playClick();
     try {
-      const res = await fetch('/api/admin/pin', {
+      const res = await fetch(getApiUrl('/api/admin/pin'), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ packId, password })
@@ -59,7 +60,7 @@ export default function AdminDrawer({ isOpen, onClose, packs, onDataChange }) {
     if (!window.confirm(`确定要移除整合包【${packName}】吗？`)) return;
     soundManager.playClick();
     try {
-      const res = await fetch('/api/admin/delete', {
+      const res = await fetch(getApiUrl('/api/admin/delete'), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ packId, password })
@@ -78,7 +79,7 @@ export default function AdminDrawer({ isOpen, onClose, packs, onDataChange }) {
   const handleResetVotes = async () => {
     soundManager.playClick();
     try {
-      const res = await fetch('/api/admin/reset-votes', {
+      const res = await fetch(getApiUrl('/api/admin/reset-votes'), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ password })
