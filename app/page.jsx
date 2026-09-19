@@ -149,10 +149,11 @@ export default function HomePage() {
   const handleDeleteMyPack = async (packId, packName) => {
     if (!window.confirm(`确定要删除你自荐的整合包【${packName}】吗？`)) return;
     try {
+      const { deviceId, fingerprint } = getClientFingerprint();
       const res = await fetch(getApiUrl('/api/suggest/delete'), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ packId, playerName })
+        body: JSON.stringify({ packId, playerName, deviceId, fingerprint })
       });
       const data = await res.json();
       if (data.success) {
