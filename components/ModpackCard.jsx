@@ -10,7 +10,8 @@ import {
   HardDrive, 
   Users, 
   Sparkles,
-  Award
+  Award,
+  Trash2
 } from 'lucide-react';
 import confetti from 'canvas-confetti';
 import { soundManager } from '@/lib/sound';
@@ -22,6 +23,7 @@ export default function ModpackCard({
   currentPlayerName = '', 
   onVote, 
   onViewVoters,
+  onDelete,
   rank = 1
 }) {
   const votes = pack.votes || [];
@@ -34,6 +36,14 @@ export default function ModpackCard({
       (v.playerName && v.playerName.toLowerCase() === currentPlayerName.toLowerCase().trim()) ||
       (v.playerId && v.playerId.toLowerCase() === currentPlayerName.toLowerCase().trim())
     )
+  );
+
+  // Check if current user is the owner/suggester of this custom pack
+  const isOwner = Boolean(
+    !pack.isPreset &&
+    currentPlayerName &&
+    pack.suggestedBy &&
+    pack.suggestedBy.trim().toLowerCase() === currentPlayerName.trim().toLowerCase()
   );
 
   // Compute XP progress percentage relative to top candidate (or at least 1)
@@ -88,13 +98,28 @@ export default function ModpackCard({
           ) : (
             <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[11px] font-medium bg-purple-950/70 text-purple-300 border border-purple-800/60">
               <Sparkles size={12} />
-              群友自荐 · @{pack.suggestedBy || '群友'}
+              {isOwner ? '我的自荐' : `群友自荐 · @${pack.suggestedBy || '群友'}`}
             </span>
           )}
 
           <span className="text-[11px] px-2 py-0.5 rounded bg-stone-800 text-stone-300 border border-stone-700">
             {pack.category || '综合模组'}
           </span>
+
+          {isOwner && (
+            <button
+              type="button"
+              onClick={(e) => {
+                e.stopPropagation();
+                onDelete?.(pack.id, pack.name);
+              }}
+              className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[11px] font-medium bg-red-950/70 text-red-300 border border-red-800/60 hover:bg-red-900/80 hover:text-white transition cursor-pointer"
+              title="删除我自荐的整合包"
+            >
+              <Trash2 size={11} />
+              <span>删除自荐</span>
+            </button>
+          )}
         </div>
 
         {/* Rank indicator */}

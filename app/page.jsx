@@ -124,6 +124,29 @@ export default function HomePage() {
     }
   };
 
+  // User deletes their own suggested modpack
+  const handleDeleteMyPack = async (packId, packName) => {
+    if (!window.confirm(`确定要删除你自荐的整合包【${packName}】吗？`)) return;
+    try {
+      const res = await fetch(getApiUrl('/api/suggest/delete'), {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ packId, playerName })
+      });
+      const data = await res.json();
+      if (data.success) {
+        setPacks((prev) => prev.filter((p) => p.id !== packId));
+        if (data.stats) {
+          setStats(data.stats);
+        }
+      } else {
+        alert(data.error || '删除失败');
+      }
+    } catch (err) {
+      alert('网络连接失败，请稍后重试');
+    }
+  };
+
   // Compute max votes for XP bar scaling
   const maxVotes = useMemo(() => {
     return Math.max(1, ...packs.map((p) => p.votes?.length || 0));
@@ -273,6 +296,7 @@ export default function HomePage() {
                 currentPlayerName={playerName}
                 onVote={handleVote}
                 onViewVoters={(p) => setViewingPack(p)}
+                onDelete={handleDeleteMyPack}
               />
             ))}
           </div>
