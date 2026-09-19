@@ -58,8 +58,11 @@ export default function AdminDrawer({ isOpen, onClose, packs, onDataChange }) {
     }
   };
 
-  const handleDelete = async (packId, packName) => {
-    if (!window.confirm(`确定要移除整合包【${packName}】吗？`)) return;
+  const handleDelete = async (packId, packName, isPreset) => {
+    const confirmMsg = isPreset
+      ? `确定要从当前列表中移除预设整合包【${packName}】吗？\n\n💡 提示：预设整合包由代码 defaultPacks.js 管理。如需永久删除，请直接在代码中移除该条目。`
+      : `确定要彻底删除群友自荐整合包【${packName}】吗？`;
+    if (!window.confirm(confirmMsg)) return;
     soundManager.playClick();
     try {
       const res = await fetch(getApiUrl('/api/admin/delete'), {
@@ -221,7 +224,7 @@ export default function AdminDrawer({ isOpen, onClose, packs, onDataChange }) {
                       </button>
 
                       <button
-                        onClick={() => handleDelete(p.id, p.name)}
+                        onClick={() => handleDelete(p.id, p.name, p.isPreset)}
                         className="px-2 py-1 rounded bg-red-950/60 border border-red-800/60 text-red-300 hover:bg-red-900/60 text-xs flex items-center gap-1 transition"
                         title="删除此整合包"
                       >
