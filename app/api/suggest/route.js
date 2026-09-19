@@ -27,7 +27,7 @@ export async function POST(req) {
     } = body;
 
     const ip = getClientIp(req);
-    const newPack = storage.suggestPack({
+    const newPack = await storage.suggestPack({
       name,
       version,
       loader,
@@ -40,7 +40,7 @@ export async function POST(req) {
       ip
     });
 
-    const stats = storage.getStats();
+    const stats = await storage.getStats();
     return NextResponse.json({ success: true, pack: newPack, stats });
   } catch (err) {
     return NextResponse.json({ success: false, error: err.message }, { status: 400 });

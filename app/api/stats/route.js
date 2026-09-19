@@ -5,7 +5,7 @@ export const dynamic = 'force-dynamic';
 
 export async function GET() {
   try {
-    const stats = storage.getStats();
+    const stats = await storage.getStats();
     return NextResponse.json({ success: true, stats });
   } catch (err) {
     return NextResponse.json({ success: false, error: err.message }, { status: 500 });

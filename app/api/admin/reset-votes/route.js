@@ -7,7 +7,7 @@ export async function POST(req) {
   try {
     const body = await req.json();
     const { password } = body;
-    const result = storage.resetAllVotes(password);
+    const result = await storage.resetAllVotes(password);
     return NextResponse.json({ success: true, result });
   } catch (err) {
     return NextResponse.json({ success: false, error: err.message }, { status: 403 });

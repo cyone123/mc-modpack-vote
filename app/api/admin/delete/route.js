@@ -7,7 +7,7 @@ export async function POST(req) {
   try {
     const body = await req.json();
     const { packId, password } = body;
-    const deleted = storage.deletePack(packId, password);
+    const deleted = await storage.deletePack(packId, password);
     return NextResponse.json({ success: true, deleted });
   } catch (err) {
     return NextResponse.json({ success: false, error: err.message }, { status: 403 });

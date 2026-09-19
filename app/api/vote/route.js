@@ -19,8 +19,8 @@ export async function POST(req) {
       return NextResponse.json({ success: false, error: "缺少整合包ID" }, { status: 400 });
     }
     const ip = getClientIp(req);
-    const result = storage.vote({ packId, playerId, playerName, ip });
-    const stats = storage.getStats();
+    const result = await storage.vote({ packId, playerId, playerName, ip });
+    const stats = await storage.getStats();
     return NextResponse.json({ success: true, ...result, stats });
   } catch (err) {
     return NextResponse.json({ success: false, error: err.message }, { status: 400 });
