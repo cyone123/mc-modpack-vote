@@ -14,12 +14,12 @@ function getClientIp(req) {
 export async function POST(req) {
   try {
     const body = await req.json();
-    const { packId, playerId, playerName } = body;
+    const { packId, playerId, playerName, deviceId, fingerprint } = body;
     if (!packId) {
       return NextResponse.json({ success: false, error: "缺少整合包ID" }, { status: 400 });
     }
     const ip = getClientIp(req);
-    const result = await storage.vote({ packId, playerId, playerName, ip });
+    const result = await storage.vote({ packId, playerId, playerName, ip, deviceId, fingerprint });
     const stats = await storage.getStats();
     return NextResponse.json({ success: true, ...result, stats });
   } catch (err) {

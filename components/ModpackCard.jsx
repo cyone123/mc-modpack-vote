@@ -13,7 +13,6 @@ import {
   Award,
   Trash2
 } from 'lucide-react';
-import confetti from 'canvas-confetti';
 import { soundManager } from '@/lib/sound';
 
 export default function ModpackCard({ 
@@ -51,27 +50,15 @@ export default function ModpackCard({
 
   const handleVoteClick = (e) => {
     soundManager.playClick();
-    
-    // Trigger confetti if casting vote
-    if (!hasVoted) {
-      if (typeof window !== 'undefined') {
-        const rect = e.currentTarget.getBoundingClientRect();
-        const x = (rect.left + rect.width / 2) / window.innerWidth;
-        const y = (rect.top + rect.height / 2) / window.innerHeight;
-        
-        confetti({
-          particleCount: 35,
-          spread: 60,
-          origin: { x, y },
-          colors: ['#22c55e', '#86efac', '#eab308', '#38bdf8']
-        });
-      }
-      soundManager.playXp();
-    } else {
-      soundManager.playPop();
+    let coords = null;
+    if (typeof window !== 'undefined' && e?.currentTarget) {
+      const rect = e.currentTarget.getBoundingClientRect();
+      coords = {
+        x: (rect.left + rect.width / 2) / window.innerWidth,
+        y: (rect.top + rect.height / 2) / window.innerHeight
+      };
     }
-
-    onVote(pack.id);
+    onVote(pack.id, coords);
   };
 
   return (

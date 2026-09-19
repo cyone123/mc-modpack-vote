@@ -23,7 +23,9 @@ export async function POST(req) {
       tags,
       description,
       link,
-      suggestedBy
+      suggestedBy,
+      deviceId,
+      fingerprint
     } = body;
 
     const ip = getClientIp(req);
@@ -37,7 +39,9 @@ export async function POST(req) {
       description,
       link,
       suggestedBy,
-      ip
+      ip,
+      deviceId,
+      fingerprint
     });
 
     const stats = await storage.getStats();

@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import { PlusCircle, X, Sparkles, AlertCircle } from 'lucide-react';
 import { soundManager } from '@/lib/sound';
 import { getApiUrl } from '@/lib/api';
+import { getClientFingerprint } from '@/lib/fingerprint';
 
 export default function SubmitModal({ isOpen, onClose, playerName, onSubmitSuccess }) {
   const [name, setName] = useState('');
@@ -46,6 +47,7 @@ export default function SubmitModal({ isOpen, onClose, playerName, onSubmitSucce
     soundManager.playClick();
 
     try {
+      const { deviceId, fingerprint } = getClientFingerprint();
       const res = await fetch(getApiUrl('/api/suggest'), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -58,7 +60,9 @@ export default function SubmitModal({ isOpen, onClose, playerName, onSubmitSucce
           tags: tags.split(/[,，、\s]+/).filter(Boolean),
           description: cleanDesc,
           link: link.trim(),
-          suggestedBy: (playerName || '热心群友').trim()
+          suggestedBy: (playerName || '热心群友').trim(),
+          deviceId,
+          fingerprint
         })
       });
 

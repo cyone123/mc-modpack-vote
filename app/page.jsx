@@ -9,6 +9,9 @@ import VotersModal from '@/components/VotersModal';
 import AdminDrawer from '@/components/AdminDrawer';
 import { Loader2, AlertCircle, Sparkles } from 'lucide-react';
 import { getApiUrl } from '@/lib/api';
+import { getClientFingerprint } from '@/lib/fingerprint';
+import confetti from 'canvas-confetti';
+import { soundManager } from '@/lib/sound';
 
 export default function HomePage() {
   const [packs, setPacks] = useState([]);
@@ -81,7 +84,7 @@ export default function HomePage() {
   };
 
   // Vote handler
-  const handleVote = async (packId) => {
+  const handleVote = async (packId, coords) => {
     // If player hasn't set their name yet, prompt them to set their IGN!
     if (!playerName) {
       setIsIdentityOpen(true);
@@ -89,13 +92,16 @@ export default function HomePage() {
     }
 
     try {
+      const { deviceId, fingerprint } = getClientFingerprint();
       const res = await fetch(getApiUrl('/api/vote'), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           packId,
           playerName,
-          playerId: playerName
+          playerId: playerName,
+          deviceId,
+          fingerprint
         })
       });
 
@@ -107,6 +113,21 @@ export default function HomePage() {
         );
         if (data.stats) {
           setStats(data.stats);
+        }
+
+        if (data.action === 'added') {
+          soundManager.playXp();
+          if (typeof window !== 'undefined') {
+            const origin = coords || { x: 0.5, y: 0.5 };
+            confetti({
+              particleCount: 35,
+              spread: 60,
+              origin,
+              colors: ['#22c55e', '#86efac', '#eab308', '#38bdf8']
+            });
+          }
+        } else if (data.action === 'removed') {
+          soundManager.playPop();
         }
       } else {
         alert(data.error || '投票异常');
